@@ -4,7 +4,7 @@
 
 	<groupId>io.github.pleuvoir</groupId>
 	<artifactId>redis-plugin</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<packaging>jar</packaging>
 	<name>${project.artifactId}</name>
 	<description>A plugin support for redis based on java.</description>

@@ -1,6 +1,12 @@
 
 ## :rocket: 方便的使用 redis
 
+[![HitCount](http://hits.dwyl.io/pleuvoir/redis-plugin.svg)](http://hits.dwyl.io/pleuvoir/redis-plugin) 
+[![GitHub issues](https://img.shields.io/github/issues/pleuvoir/redis-plugin.svg)](https://github.com/pleuvoir/redis-plugin/issues)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?label=license)](https://github.com/pleuvoir/redis-plugin/blob/master/LICENSE)
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.pleuvoir/redis-plugin.svg?label=maven%20central)](https://oss.sonatype.org/#nexus-search;quick~redis-plugin)
+[![Download](https://img.shields.io/badge/downloads-master-green.svg)](https://codeload.github.com/pleuvoir/redis-plugin/zip/master)
+
 ### 特性
 
 - 简单易用
