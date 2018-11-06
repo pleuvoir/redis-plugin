@@ -68,7 +68,7 @@ redis.cacheManager.prefix=default-redis-plugin:
 
 #### 4. API
 
-配置完成后，会提供缓存服务`CacheService` 提供了一些操作数据的方法：
+配置完成后，缓存服务 `CacheService` 提供了一些操作数据的方法，详情请查看具体 API：
 
 ```java
 /**
@@ -108,5 +108,8 @@ boolean putIfExist(String key, Object value);
 - [ ] 分布式锁
 - [ ] 消息中间件
 - [ ] More API
+
+### 开源协议
+[Apache License](LICENSE)
 
 
