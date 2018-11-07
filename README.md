@@ -13,6 +13,9 @@
 - 支持集群
 - 自动配置
 - 多种实现可自由切换
+- 方便的操作缓存数据
+- 分布式锁
+- 分布式限流
 
 ### 快速开始
 
@@ -22,7 +25,7 @@
 <dependency>
 	<groupId>io.github.pleuvoir</groupId>
 	<artifactId>redis-plugin</artifactId>
-	<version>最新版本</version>
+	<version>${latest.version}</version>
 </dependency>
 ```
 
@@ -104,7 +107,6 @@ boolean putIfExist(String key, Object value);
 
 ### TODO LIST
 
-- [ ] Type：redisson
 - [ ] 分布式锁
 - [ ] 消息中间件
 - [ ] More API
