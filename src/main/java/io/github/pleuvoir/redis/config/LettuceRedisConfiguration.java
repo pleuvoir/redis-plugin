@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -31,11 +31,12 @@ import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 import io.github.pleuvoir.redis.cache.CacheService;
 import io.github.pleuvoir.redis.cache.RedisCacheService;
 import io.github.pleuvoir.redis.kit.PropertiesWrap;
+import io.github.pleuvoir.redis.lock.RedisLock;
 import io.lettuce.core.resource.ClientResources;
 import io.lettuce.core.resource.DefaultClientResources;
 
-@Configuration
 @EnableCaching
+@Import(RedisLock.class)
 public class LettuceRedisConfiguration {
 
 	private String location;
