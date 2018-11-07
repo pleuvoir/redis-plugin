@@ -1,100 +1,74 @@
 package io.github.pleuvoir.redis.lock;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
 import io.github.pleuvoir.redis.kit.PropertiesWrap;
+import io.github.pleuvoir.redis.kit.RedisPluginConfigUtils;
 
-public class RedisLock implements Lock {
+public class RedisLock implements Lock, InitializingBean {
 
-	@Autowired
-	@Qualifier("redisTemplate")
-	private RedisTemplate<String, Object> redisTemplate;
+	@Resource(name = "stringRedisTemplate")
+	private StringRedisTemplate redisTemplate;
 
-	@Autowired
-	@Qualifier("redisPropertiesWrap")
+	@Resource(name = "redisPropertiesWrap")
 	private PropertiesWrap config;
 
-	private static final String LOCK_VALUE = "locks";
-	
-	private String lockScript;
-	private String unlockScript;
-
-	@PostConstruct
-	public void initialize() throws IOException {
-		this.lockScript = new ResourceScriptSource(new ClassPathResource("META-INF/scripts/lock.lua")).getScriptAsString();
-		this.unlockScript = new ResourceScriptSource(new ClassPathResource("META-INF/scripts/unlock.lua")).getScriptAsString();
-	}
+	private String lockKeyPreix;
+	private RedisScript<Long> lockScript;
+	private RedisScript<Long> unlockScript;
 
 	private String generateKey(String key) {
-		return config.getString("redis.cacheManager.prefix", "redis-plugin:lock").concat(key);
+		return lockKeyPreix.concat(key);
 	}
-
 
 	@Override
 	public boolean lock(String key) {
-//		String lockKey = key; 
-//		RedisScript<Number> redisScript = new DefaultRedisScript<>(lockScript, Number.class);
-//		List<String> keyList = new ArrayList<String>();
-//		keyList.add(lockKey); 
-//		keyList.add("22sewfge4w"); 
-//		Number execute = redisTemplate.execute(redisScript, keyList, "10000");
-//		System.out.println(execute);
-	    String luaScript = buildLuaScript();
-	    List<String> keyList = new ArrayList<String>();
-	    keyList.add("redis-plugin:lock-11111");
-        RedisScript<Integer> redisScript = new DefaultRedisScript<>(luaScript, Integer.class);
-        Integer count = redisTemplate.execute(redisScript, keyList, 10, 15);
-        System.out.println(count);
-		return false;
+		return lock(key, RedisPluginConfigUtils.DEFAULT_REDIS_LOCK_TIMEOUT);
 	}
 	
-	/**
-     * 限流 脚本
-     *
-     * @return lua脚本
-     */
-    public String buildLuaScript() {
-        StringBuilder lua = new StringBuilder();
-        lua.append("local c");
-        lua.append("\nc = redis.call('get',KEYS[1])");
-        // 调用不超过最大值，则直接返回
-        lua.append("\nif c and tonumber(c) > tonumber(ARGV[1]) then");
-        lua.append("\nreturn c;");
-        lua.append("\nend");
-        // 执行计算器自加
-        lua.append("\nc = redis.call('incr',KEYS[1])");
-        lua.append("\nif tonumber(c) == 1 then");
-        // 从第一次调用开始限流，设置对应键值的过期
-        lua.append("\nredis.call('expire',KEYS[1],ARGV[2])");
-        lua.append("\nend");
-        lua.append("\nreturn c;");
-        return lua.toString();
-    }
-    
+	@Override
+	public boolean lock(String key, String timeout) {
+		Long retVal = redisTemplate.execute(this.lockScript,
+							Arrays.asList(generateKey(key), RedisPluginConfigUtils.LOCK_VALUE),
+							timeout);
+
+		return RedisPluginConfigUtils.REDIS_LOCK_ACQUIRE_SUCCESS.equals(retVal);
+	}
+
 	@Override
 	public void unlock(String key) {
-		RedisScript<Number> redisScript = new DefaultRedisScript<>(unlockScript, Number.class);
-		Number execute = redisTemplate.execute(redisScript, Arrays.asList(generateKey(key)), LOCK_VALUE);
-		System.out.println(execute);
+		redisTemplate.execute(this.unlockScript, Arrays.asList(generateKey(key), RedisPluginConfigUtils.LOCK_VALUE));
 	}
 
 	@Override
 	public boolean isLocked(String key) {
-		return false;
+		return StringUtils.equals(RedisPluginConfigUtils.LOCK_VALUE, redisTemplate.opsForValue().get(generateKey(key)));
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+
+		String propCachePrefix = config.getString("redis.cacheManager.prefix");
+		
+		this.lockKeyPreix = StringUtils.isNotBlank(propCachePrefix) ? propCachePrefix.concat(":limit") : "unkown:limit";
+
+		this.lockScript = new DefaultRedisScript<>(
+				new ResourceScriptSource(new ClassPathResource("META-INF/scripts/lock.lua")).getScriptAsString(),
+				Long.class);
+
+		this.unlockScript = new DefaultRedisScript<>(
+				new ResourceScriptSource(new ClassPathResource("META-INF/scripts/unlock.lua")).getScriptAsString(),
+				Long.class);
 	}
 
 }
