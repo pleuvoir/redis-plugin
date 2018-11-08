@@ -15,7 +15,7 @@ import org.springframework.scripting.support.ResourceScriptSource;
 import io.github.pleuvoir.redis.kit.PropertiesWrap;
 import io.github.pleuvoir.redis.kit.RedisPluginConfigUtils;
 
-public class RedisRateLimit implements RateLimit,InitializingBean{
+public class LettuceRedisRateLimit implements RateLimit, InitializingBean {
 
 	@Resource(name = "stringRedisTemplate")
 	private StringRedisTemplate redisTemplate;
@@ -43,7 +43,7 @@ public class RedisRateLimit implements RateLimit,InitializingBean{
 		
 		String propCachePrefix = config.getString("redis.cacheManager.prefix");
 		
-		this.limitKeyPreix = StringUtils.isNotBlank(propCachePrefix) ? propCachePrefix.concat(":limit") : "unkown:limit";
+		this.limitKeyPreix = StringUtils.isNotBlank(propCachePrefix) ? propCachePrefix.concat("{slot:limit}") : "{unkown:limit}";
 		
 		this.limitScript = new DefaultRedisScript<>(
 				new ResourceScriptSource(new ClassPathResource("META-INF/scripts/limit.lua")).getScriptAsString(),

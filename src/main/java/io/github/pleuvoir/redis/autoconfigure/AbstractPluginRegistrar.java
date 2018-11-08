@@ -44,7 +44,7 @@ public abstract class AbstractPluginRegistrar
 
 		this.configurationClass = defaultConfigurationClass();
 		
-		// give sub-class a change to correct main configuration and others...
+		// give sub-class a chance to correct default configuration class and stop register process
 		if (!correct(attributes, this.beanFactory)) {
 			return;
 		}
@@ -65,7 +65,8 @@ public abstract class AbstractPluginRegistrar
 
 		registry.registerBeanDefinition(pluginName, definition.getBeanDefinition());
 	}
-
+	
+	
 	private String getEnableAnnotationClassName() {
 		return getEnableAnnotationClass().getCanonicalName();
 	}
@@ -92,12 +93,14 @@ public abstract class AbstractPluginRegistrar
 	}
 	
 	/**
-	 * give sub-class a change to correct main configuration and others...
+	 * give sub-class a chance to correct default configuration class and stop register process
 	 * @param attributes	annotation attributes
 	 * @param beanFactory	the root interface for accessing a Spring bean container.
 	 * @return	if false, plugin register will break.
 	 */
-	protected abstract boolean correct(AnnotationAttributes attributes, BeanFactory beanFactory);
+	protected boolean correct(AnnotationAttributes attributes, BeanFactory beanFactory) {
+		return true;
+	};
 
 	protected abstract void customize(BeanDefinitionRegistry registry, AnnotationAttributes attributes,
 			BeanDefinitionBuilder definition, BeanFactory beanFactory);
@@ -118,7 +121,7 @@ public abstract class AbstractPluginRegistrar
 		return configurationClass;
 	}
 
-	public void setConfigurationClass(Class<?> configurationClass) {
+	public void resetConfigurationClass(Class<?> configurationClass) {
 		this.configurationClass = configurationClass;
 	}
 

@@ -31,13 +31,13 @@ import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 import io.github.pleuvoir.redis.cache.CacheService;
 import io.github.pleuvoir.redis.cache.RedisCacheService;
 import io.github.pleuvoir.redis.kit.PropertiesWrap;
-import io.github.pleuvoir.redis.limit.RedisRateLimit;
-import io.github.pleuvoir.redis.lock.RedisLock;
+import io.github.pleuvoir.redis.limit.LettuceRedisRateLimit;
+import io.github.pleuvoir.redis.lock.LettuceLock;
 import io.lettuce.core.resource.ClientResources;
 import io.lettuce.core.resource.DefaultClientResources;
 
 @EnableCaching
-@Import({ RedisLock.class, RedisRateLimit.class })
+@Import({LettuceLock.class, LettuceRedisRateLimit.class})
 public class LettuceRedisConfiguration {
 
 	private String location;
@@ -97,6 +97,7 @@ public class LettuceRedisConfiguration {
 			if (StringUtils.isNotBlank(password)) {
 				clusterConfig.setPassword(RedisPassword.of(password));
 			}
+			clusterConfig.setMaxRedirects(nodes.length);
 			factory = new LettuceConnectionFactory(clusterConfig, clientConfig);
 		}
 		return factory;
