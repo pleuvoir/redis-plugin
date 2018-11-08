@@ -1,6 +1,7 @@
 package io.github.pleuvoir.redis.lock;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -15,7 +16,7 @@ import org.springframework.scripting.support.ResourceScriptSource;
 import io.github.pleuvoir.redis.kit.PropertiesWrap;
 import io.github.pleuvoir.redis.kit.RedisPluginConfigUtils;
 
-public class RedisLock implements Lock, InitializingBean {
+public class LettuceLock implements Lock, InitializingBean {
 
 	@Resource(name = "stringRedisTemplate")
 	private StringRedisTemplate redisTemplate;
@@ -27,7 +28,7 @@ public class RedisLock implements Lock, InitializingBean {
 	private RedisScript<Long> lockScript;
 	private RedisScript<Long> unlockScript;
 
-	private String generateKey(String key) {
+	private String generate(String key) {
 		return lockKeyPreix.concat(key);
 	}
 
@@ -38,21 +39,32 @@ public class RedisLock implements Lock, InitializingBean {
 	
 	@Override
 	public boolean lock(String key, String timeout) {
-		Long retVal = redisTemplate.execute(this.lockScript,
-							Arrays.asList(generateKey(key), RedisPluginConfigUtils.LOCK_VALUE),
-							timeout);
-
+		
+		String keys1 = generate(key);
+		String keys2 = generate(RedisPluginConfigUtils.LOCK_VALUE);
+		List<String> keys = Arrays.asList(keys1,keys2);
+		
+		String argv1 = timeout;
+		
+		Long retVal = redisTemplate.execute(this.lockScript, keys, argv1);
+		
 		return RedisPluginConfigUtils.REDIS_LOCK_ACQUIRE_SUCCESS.equals(retVal);
 	}
 
 	@Override
 	public void unlock(String key) {
-		redisTemplate.execute(this.unlockScript, Arrays.asList(generateKey(key), RedisPluginConfigUtils.LOCK_VALUE));
+
+		String keys1 = generate(key);
+		List<String> keys = Arrays.asList(keys1);
+
+		String argv1 = RedisPluginConfigUtils.LOCK_VALUE;
+
+		redisTemplate.execute(this.unlockScript, keys, argv1);
 	}
 
 	@Override
 	public boolean isLocked(String key) {
-		return StringUtils.equals(RedisPluginConfigUtils.LOCK_VALUE, redisTemplate.opsForValue().get(generateKey(key)));
+		return redisTemplate.hasKey(generate(key));
 	}
 
 	@Override
@@ -60,7 +72,7 @@ public class RedisLock implements Lock, InitializingBean {
 
 		String propCachePrefix = config.getString("redis.cacheManager.prefix");
 		
-		this.lockKeyPreix = StringUtils.isNotBlank(propCachePrefix) ? propCachePrefix.concat(":limit") : "unkown:limit";
+		this.lockKeyPreix = StringUtils.isNotBlank(propCachePrefix) ? propCachePrefix.concat("{slot:lock}") : "{unkown:lock}";
 
 		this.lockScript = new DefaultRedisScript<>(
 				new ResourceScriptSource(new ClassPathResource("META-INF/scripts/lock.lua")).getScriptAsString(),

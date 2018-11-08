@@ -31,12 +31,11 @@ import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 import io.github.pleuvoir.redis.cache.CacheService;
 import io.github.pleuvoir.redis.cache.RedisCacheService;
 import io.github.pleuvoir.redis.kit.PropertiesWrap;
-import io.github.pleuvoir.redis.limit.RedisRateLimit;
-import io.github.pleuvoir.redis.lock.RedisLock;
+import io.github.pleuvoir.redis.lock.JedisLock;
 import redis.clients.jedis.JedisPoolConfig;
 
 @EnableCaching
-@Import({ RedisLock.class, RedisRateLimit.class })
+@Import({JedisLock.class})
 public class JedisRedisConfiguration {
 	
 	private String location;
@@ -94,6 +93,7 @@ public class JedisRedisConfiguration {
 			if (StringUtils.isNotBlank(password)) {
 				clusterConfig.setPassword(RedisPassword.of(password));
 			}
+			clusterConfig.setMaxRedirects(nodes.length);
 			factory = new JedisConnectionFactory(clusterConfig, pool);
 		}
 		return factory;

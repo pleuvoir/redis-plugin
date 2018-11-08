@@ -18,13 +18,12 @@ public class EnableRedisPluginRegistrar extends AbstractPluginRegistrar {
 		Type type = attributes.getEnum("type");
 		switch (type) {
 			case JEDIS:
-				setConfigurationClass(JedisRedisConfiguration.class);
+				resetConfigurationClass(JedisRedisConfiguration.class);
 				break;
 			case LETTUCE:
-				setConfigurationClass(LettuceRedisConfiguration.class);
+				resetConfigurationClass(LettuceRedisConfiguration.class);
 				break;
 			default:
-				setConfigurationClass(JedisRedisConfiguration.class);
 				break;
 		}
 		return true;
@@ -37,7 +36,7 @@ public class EnableRedisPluginRegistrar extends AbstractPluginRegistrar {
 
 	@Override
 	protected Class<?> defaultConfigurationClass() {
-		return JedisRedisConfiguration.class;
+		return LettuceRedisConfiguration.class;
 	}
 
 	@Override
