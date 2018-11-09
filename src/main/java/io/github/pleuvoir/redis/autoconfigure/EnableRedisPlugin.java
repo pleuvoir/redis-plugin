@@ -22,7 +22,7 @@ public @interface EnableRedisPlugin {
 	 */
 	String location() default "redis.properties";
 	
-	Type type() default Type.JEDIS;
+	Type type() default Type.LETTUCE;
 	
 	enum Type {
 		JEDIS, 

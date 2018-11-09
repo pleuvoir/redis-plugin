@@ -21,7 +21,6 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.Assert;
@@ -100,12 +99,14 @@ public class JedisRedisConfiguration {
 	}
 
 	@Bean(name = "redisTemplate")
-	public RedisTemplate<String,Object> getRedisTemplate(@Qualifier("jedisConnectionFactory") JedisConnectionFactory connectionFactory){
-		RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(connectionFactory);
-		redisTemplate.setKeySerializer(new StringRedisSerializer(Charset.forName("UTF-8")));
-		redisTemplate.setValueSerializer(new JdkSerializationRedisSerializer());
-		return redisTemplate;
+	public RedisTemplate<String, Object> getRedisTemplate(@Qualifier("jedisConnectionFactory") JedisConnectionFactory connectionFactory){
+		RedisTemplate<String,Object> template = new RedisTemplate<>();
+		template.setKeySerializer(new StringRedisSerializer(Charset.forName("UTF-8")));
+		template.setValueSerializer(new GenericFastJsonRedisSerializer());
+		template.setHashKeySerializer(new StringRedisSerializer(Charset.forName("UTF-8")));
+		template.setHashValueSerializer(new GenericFastJsonRedisSerializer());
+		template.setConnectionFactory(connectionFactory);
+		return template;
 	}
 	
 	@Bean(name = "stringRedisTemplate")

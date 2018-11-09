@@ -1,11 +1,12 @@
 
-local key = KEYS[1] --限流 KEY （一秒一个）
-local limit = tonumber(ARGV[1]) --限流大小
-local current = tonumber(redis.call('get', key) or "0")
-if current +1 > limit then --如果超出限流大小
-	return 0
-else --请求数+1，并设置两秒过期时间
-	redis.call("INCRBY",key,"1");
-	redis.call("expire",key,"2");
-	return 1
+local c =  tonumber(redis.call('get', KEYS[1]) or "0")
+local limitCount = tonumber(ARGV[1])
+local limitPeriod = ARGV[2]
+if c > limitCount then
+return c;
 end
+c = redis.call('incr',KEYS[1])
+if c == 1 then
+redis.call('expire',KEYS[1],limitPeriod)
+end
+return c;
