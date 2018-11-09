@@ -8,5 +8,4 @@ public class RedisPluginConfigUtils {
 
 	public static final String LOCK_VALUE = "locks";
 	
-	public static final Long REDIS_LIMIT_ACQUIRE_SUCCESS = 1L;
 }
