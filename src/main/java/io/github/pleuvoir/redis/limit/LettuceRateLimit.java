@@ -15,7 +15,7 @@ import org.springframework.scripting.support.ResourceScriptSource;
 
 import io.github.pleuvoir.redis.kit.PropertiesWrap;
 
-public class LettuceRedisRateLimit implements RateLimit, InitializingBean {
+public class LettuceRateLimit implements RateLimit, InitializingBean {
 
 	@Resource(name = "redisTemplate")
 	private RedisTemplate<String, Object> redisTemplate;

@@ -107,7 +107,6 @@ boolean putIfExist(String key, Object value);
 
 ### TODO LIST
 
-- [ ] 分布式锁
 - [ ] 消息中间件
 - [ ] More API
 

@@ -19,12 +19,14 @@ public class LuaLimitTest {
 	       Timer timer = new Timer();
 	        timer.scheduleAtFixedRate(new TimerTask() {
 	            public void run() {
-	                for (int i = 0; i < 1; i++) {
+	                for (int i = 0; i < 5; i++) {
 	                    new Thread(new Runnable() {
 	                        @Override
 	                        public void run() {
-							if (limitExecutor.tryAccess("limit", "X-Y", 10, 3)) {
+							if (limitExecutor.tryAccess("resource-name", "X-Y", 10, 20)) {
 								System.out.println("I get it ! " + LocalDateTime.now().getSecond());
+							} else {
+								System.out.println("oh my god, i am a loser ..");
 							}
 	                        }
 	                    }).start();
