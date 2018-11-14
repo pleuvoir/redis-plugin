@@ -6,7 +6,7 @@ import io.github.pleuvoir.redis.autoconfigure.EnableRedisPlugin;
 import io.github.pleuvoir.redis.autoconfigure.EnableRedisPlugin.Type;
 
 @Configuration
-@EnableRedisPlugin(type = Type.LETTUCE)
+@EnableRedisPlugin(type = Type.JEDIS)
 public class AppConfiguration {
 
 }
