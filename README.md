@@ -13,7 +13,7 @@
 - 支持集群
 - 自动配置
 - 多种实现可自由切换
-- 方便的操作缓存数据
+- 方便的 API
 - 分布式锁
 - 分布式限流
 
@@ -33,6 +33,8 @@
 
 接着我们需要准备一份配置文件，它看起来是这样的，文件的名称我们先假定为 `redis.properties`
 
+此处 `redis.hostAndPort=127.0.0.1:6379` 代表单机，如果是集群可以是 `127.0.0.1:6379,127.0.0.1:6379,127.0.0.1:6379` 这样的格式。
+
 ```xml
 redis.hostAndPort=127.0.0.1:6379
 redis.database=1
@@ -40,8 +42,7 @@ redis.password=
 redis.pool.maxIdle=4
 redis.pool.maxTotal=6
 redis.pool.maxWait=5000
-redis.pool.testOnBorrow=true
-redis.cacheManager.prefix=default-redis-plugin:
+redis.cacheManager.prefix=redis-plugin:
 ```
 
 #### 3. 使用 spring 进行管理
@@ -62,12 +63,11 @@ redis.cacheManager.prefix=default-redis-plugin:
 </bean>
 ```
 
-温馨提示：使用 xml 注册的方式，可以不指定扫描包。
+提示：使用 xml 注册的方式，可以不指定扫描包。
 
 如果是使用注解的项目，建议使用自动配置。
 
-只需在配置类中声明 `@EnableRedisPlugin` 即可，当然这是使用默认配置。 `EnableRedisPlugin` 注解有几个重要的属性，分别是 `location` 以及 `Type`，其中 `location` 表示需要加载的配置文件位置，`location` 可以不声明，默认为 classpath 下的 `redis.properties` 文件。 `Type` 则表示可以选择内部的第三方  `redis` 实现，目前支持 `Jedis` 和  `Lettuce`。
-
+只需在配置类中声明 `@EnableRedisPlugin` 即可，当然这是使用默认的配置。 `EnableRedisPlugin` 注解有几个重要的属性，分别是 `location` 以及 `Type`，其中 `location` 表示需要加载的配置文件位置，`location` 可以不声明，默认为 classpath 下的 `redis.properties` 文件。 `Type` 则表示可以选择内部的第三方  `redis` 实现，默认是 `Lettuce` ，目前支持 `Jedis` 和  `Lettuce`。
 
 #### 4. API
 
@@ -98,6 +98,38 @@ boolean putIfExist(String key, Object value);
 
 ...
 ```
+
+#### 5. 分布式锁
+
+锁的使用方法如下所指：
+
+```java
+String key = "88250";
+
+if (lock.isLocked(key)) {
+	System.out.println("😭  this resource is locked .. ");
+	return;
+}
+
+try {
+	if (!lock.lock(key)) {
+		System.out.println("I got a lock fail ...");
+		return;
+	}
+	// do your bussiness
+	unpark();
+} finally {
+	lock.unlock(key);
+}
+```
+
+#### 6. 限流
+
+```java
+limitExecutor.tryAccess("limit", "X-Y", 10, 3);
+```
+
+流控正常时返回  `true`，被限流时返回 `false`，其中 `limit` 为资源的名称， `X-Y` 为限流 key ， 10 和  3 代表 <b> 该资源 10 秒内可以访问 3 次</b>。
 
 ### 特别说明
 
