@@ -2,7 +2,9 @@ package io.github.pleuvoir.redis.cache;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -10,9 +12,10 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 
 import io.github.pleuvoir.redis.kit.PropertiesWrap;
 
@@ -110,7 +113,7 @@ public class RedisCacheService implements CacheService {
 	@Override
 	public boolean putIfExist(String key, Object value, int expireSeconds) {
 		StringRedisSerializer keySerializer = (StringRedisSerializer)redisTemplate.getKeySerializer();
-		JdkSerializationRedisSerializer valueSerializer = (JdkSerializationRedisSerializer)redisTemplate.getValueSerializer();
+		GenericFastJsonRedisSerializer valueSerializer = (GenericFastJsonRedisSerializer)redisTemplate.getValueSerializer();
 		byte[] k = keySerializer.serialize(key);
 		byte[] v = valueSerializer.serialize(value);
 			
@@ -125,14 +128,14 @@ public class RedisCacheService implements CacheService {
 	}
 	
 	/** 
-     * 缓存中key对应的值增加数值long 
+     * 缓存中key对应的值增加数值incrValue 
      * @param key  
      * @param incrValue 
      * @return 
      */  
 	@Override
     public double incrBy(String key, double incrValue){
-        //将key对应的数字加decrement。如果key不存在，操作之前，key就会被置为0。  
+        //将key对应的数字加incrValue。如果key不存在，操作之前，key就会被置为0。  
         //如果key的value类型错误或者是个不能表示成数字的字符串，  
         //就返回错误。这个操作最多支持64位有符号的正型数字。  
         Double result = (Double) redisTemplate.execute(new RedisCallback<Object>() {  

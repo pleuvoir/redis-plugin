@@ -139,7 +139,6 @@ limitExecutor.tryAccess("limit", "X-Y", 10, 3);
 
 ### TODO LIST
 
-- [ ] 基于 jedis 的限流实现以及 aop 支持
 - [ ] 消息中间件
 - [ ] More API
 
