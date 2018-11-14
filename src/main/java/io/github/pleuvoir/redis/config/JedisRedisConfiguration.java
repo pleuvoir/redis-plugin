@@ -30,11 +30,12 @@ import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 import io.github.pleuvoir.redis.cache.CacheService;
 import io.github.pleuvoir.redis.cache.RedisCacheService;
 import io.github.pleuvoir.redis.kit.PropertiesWrap;
+import io.github.pleuvoir.redis.limit.JedisRedisRateLimit;
 import io.github.pleuvoir.redis.lock.JedisLock;
 import redis.clients.jedis.JedisPoolConfig;
 
 @EnableCaching
-@Import({JedisLock.class})
+@Import({JedisLock.class, JedisRedisRateLimit.class})
 public class JedisRedisConfiguration {
 	
 	private String location;
