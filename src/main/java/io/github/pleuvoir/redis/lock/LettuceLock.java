@@ -21,8 +21,6 @@ public class LettuceLock implements Lock, InitializingBean {
 
 	private static final String DEFAULT_REDIS_LOCK_TIMEOUT = String.valueOf(5);
 
-	private static final String LOCK_VALUE = "locks";
-	
 	@Resource(name = "stringRedisTemplate")
 	private StringRedisTemplate redisTemplate;
 
@@ -38,15 +36,15 @@ public class LettuceLock implements Lock, InitializingBean {
 	}
 
 	@Override
-	public boolean lock(String key) {
-		return lock(key, DEFAULT_REDIS_LOCK_TIMEOUT);
+	public boolean lock(String key, String owner) {
+		return lock(key, owner, DEFAULT_REDIS_LOCK_TIMEOUT);
 	}
 	
 	@Override
-	public boolean lock(String key, String timeout) {
+	public boolean lock(String key, String owner, String timeout) {
 		
 		String keys1 = generate(key);
-		String keys2 = LOCK_VALUE;
+		String keys2 = owner;
 		List<String> keys = Arrays.asList(keys1,keys2);
 		
 		String argv1 = timeout;
@@ -57,12 +55,12 @@ public class LettuceLock implements Lock, InitializingBean {
 	}
 
 	@Override
-	public void unlock(String key) {
+	public void unlock(String key, String owner) {
 
 		String keys1 = generate(key);
 		List<String> keys = Arrays.asList(keys1);
 
-		String argv1 = LOCK_VALUE;
+		String argv1 = owner;
 
 		redisTemplate.execute(this.unlockScript, keys, argv1);
 	}
