@@ -14,10 +14,15 @@ import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
 import io.github.pleuvoir.redis.kit.PropertiesWrap;
-import io.github.pleuvoir.redis.kit.RedisPluginConfigUtils;
 
 public class LettuceLock implements Lock, InitializingBean {
 
+	private static final Long REDIS_LOCK_ACQUIRE_SUCCESS = 1L;
+
+	private static final String DEFAULT_REDIS_LOCK_TIMEOUT = String.valueOf(5);
+
+	private static final String LOCK_VALUE = "locks";
+	
 	@Resource(name = "stringRedisTemplate")
 	private StringRedisTemplate redisTemplate;
 
@@ -34,21 +39,21 @@ public class LettuceLock implements Lock, InitializingBean {
 
 	@Override
 	public boolean lock(String key) {
-		return lock(key, RedisPluginConfigUtils.DEFAULT_REDIS_LOCK_TIMEOUT);
+		return lock(key, DEFAULT_REDIS_LOCK_TIMEOUT);
 	}
 	
 	@Override
 	public boolean lock(String key, String timeout) {
 		
 		String keys1 = generate(key);
-		String keys2 = generate(RedisPluginConfigUtils.LOCK_VALUE);
+		String keys2 = LOCK_VALUE;
 		List<String> keys = Arrays.asList(keys1,keys2);
 		
 		String argv1 = timeout;
 		
 		Long retVal = redisTemplate.execute(this.lockScript, keys, argv1);
 		
-		return RedisPluginConfigUtils.REDIS_LOCK_ACQUIRE_SUCCESS.equals(retVal);
+		return REDIS_LOCK_ACQUIRE_SUCCESS.equals(retVal);
 	}
 
 	@Override
@@ -57,7 +62,7 @@ public class LettuceLock implements Lock, InitializingBean {
 		String keys1 = generate(key);
 		List<String> keys = Arrays.asList(keys1);
 
-		String argv1 = RedisPluginConfigUtils.LOCK_VALUE;
+		String argv1 = LOCK_VALUE;
 
 		redisTemplate.execute(this.unlockScript, keys, argv1);
 	}
@@ -69,10 +74,10 @@ public class LettuceLock implements Lock, InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-
+		
 		String propCachePrefix = config.getString("redis.cacheManager.prefix");
 		
-		this.lockKeyPreix = StringUtils.isNotBlank(propCachePrefix) ? propCachePrefix.concat("{slot:lock}") : "{unkown:lock}";
+		this.lockKeyPreix = StringUtils.isNotBlank(propCachePrefix) ? propCachePrefix.concat("{lock}") : "{unkown:lock}";
 
 		this.lockScript = new DefaultRedisScript<>(
 				new ResourceScriptSource(new ClassPathResource("META-INF/scripts/lock.lua")).getScriptAsString(),

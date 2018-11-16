@@ -21,11 +21,5 @@ public @interface EnableRedisPlugin {
 	 * the location of resource file.
 	 */
 	String location() default "redis.properties";
-	
-	Type type() default Type.LETTUCE;
-	
-	enum Type {
-		JEDIS, 
-		LETTUCE;
-	}
+
 }

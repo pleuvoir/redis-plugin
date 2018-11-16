@@ -7,28 +7,10 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.core.annotation.AnnotationAttributes;
 
-import io.github.pleuvoir.redis.autoconfigure.EnableRedisPlugin.Type;
-import io.github.pleuvoir.redis.config.JedisRedisConfiguration;
 import io.github.pleuvoir.redis.config.LettuceRedisConfiguration;
 
 public class EnableRedisPluginRegistrar extends AbstractPluginRegistrar {
 
-	@Override
-	protected boolean correct(AnnotationAttributes attributes, BeanFactory beanFactory) {
-		Type type = attributes.getEnum("type");
-		switch (type) {
-			case JEDIS:
-				resetConfigurationClass(JedisRedisConfiguration.class);
-				break;
-			case LETTUCE:
-				resetConfigurationClass(LettuceRedisConfiguration.class);
-				break;
-			default:
-				break;
-		}
-		return true;
-	}
-	
 	@Override
 	protected Class<? extends Annotation> getEnableAnnotationClass() {
 		return EnableRedisPlugin.class;

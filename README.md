@@ -12,7 +12,6 @@
 - 简单易用
 - 支持集群
 - 自动配置
-- 多种实现可自由切换
 - 方便的 API
 - 分布式锁
 - 分布式限流
@@ -50,14 +49,6 @@ redis.cacheManager.prefix=redis-plugin:
 对于使用 `xml` 进行配置的项目，只需要如下声明，即可获得缓存能力。
 
 ```xml
-<bean class="io.github.pleuvoir.JedisRedisConfiguration">
-    <property name="location" value="redis.properties"/>
-</bean>
-```
-
-显然，这种实现是基于 `Jedis` 的，同时我们也支持 `Lettuce`，就像这样：
-
-```xml
 <bean class="io.github.pleuvoir.LettuceRedisConfiguration">
     <property name="location" value="redis.properties"/>
 </bean>
@@ -65,9 +56,17 @@ redis.cacheManager.prefix=redis-plugin:
 
 提示：使用 xml 注册的方式，可以不指定扫描包。
 
-如果是使用注解的项目，建议使用自动配置。
+如果是使用注解的项目，建议使用自动配置。就像这样：
 
-只需在配置类中声明 `@EnableRedisPlugin` 即可，当然这是使用默认的配置。 `EnableRedisPlugin` 注解有几个重要的属性，分别是 `location` 以及 `Type`，其中 `location` 表示需要加载的配置文件位置，`location` 可以不声明，默认为 classpath 下的 `redis.properties` 文件。 `Type` 则表示可以选择内部的第三方  `redis` 实现，默认是 `Lettuce` ，目前支持 `Jedis` 和  `Lettuce`。
+```java
+@Configuration
+@EnableRedisPlugin
+public class AppConfiguration {
+
+}
+```
+
+只需在配置类中声明 `@EnableRedisPlugin` 即可，当然这是使用默认的配置。 `EnableRedisPlugin` 注解有一个属性是  `location` 表示需要加载的配置文件位置, `location` 可以不声明，默认为  classpath 下的 `redis.properties` 文件。 
 
 #### 4. API
 
@@ -101,7 +100,7 @@ boolean putIfExist(String key, Object value);
 
 #### 5. 分布式锁
 
-锁的使用方法如下所指：
+锁的使用方法如下：
 
 ```java
 String key = "88250";
@@ -133,16 +132,15 @@ limitExecutor.tryAccess("limit", "X-Y", 10, 3);
 
 ### 特别说明
 
-如果项目使用  `Profiles` 来管理 spring 的环境，例如  `Environment().setActiveProfiles("dev")` ，自动配置会尝试将当前环境修饰符追加到文件名称后，即如果您使用了 `@EnableRedisPlugin(location = "redis.properties")` 进行自动配置，插件会去寻找名为   `redis-dev.properties` 的配置文件，确保文件存在即可。
+如果项目使用  `Profiles` 来管理 spring 的环境，如  `Environment().setActiveProfiles("dev")` ，自动配置会尝试将当前环境修饰符追加到文件名称后。即如果您使用了 `@EnableRedisPlugin(location = "redis.properties")` 进行配置，插件会去寻找名为   `redis-dev.properties` 的配置文件，确保文件存在即可。
 
 使用 xml 注册的方式，不受此特性的影响。
 
 ### TODO LIST
 
-- [ ] 消息中间件
+- [ ] 消息队列
 - [ ] More API
 
 ### 开源协议
 [Apache License](LICENSE)
-
 
