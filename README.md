@@ -104,28 +104,27 @@ boolean putIfExist(String key, Object value);
 
 ```java
 String key = "88250";
+String owner = new AlternativeJdkIdGenerator().generateId().toString();
 
 if (lock.isLocked(key)) {
-	System.out.println("😭  this resource is locked .. ");
 	return;
 }
 
 try {
-	if (!lock.lock(key)) {
-		System.out.println("I got a lock fail ...");
+	if (!lock.lock(key, owner)) {
 		return;
 	}
 	// do your bussiness
-	unpark();
+	..
 } finally {
-	lock.unlock(key);
+	lock.unlock(key, owner);
 }
 ```
 
 #### 6. 限流
 
 ```java
-limitExecutor.tryAccess("limit", "X-Y", 10, 3);
+rateLimit.tryAccess("limit", "X-Y", 10, 3);
 ```
 
 流控正常时返回  `true`，被限流时返回 `false`，其中 `limit` 为资源的名称， `X-Y` 为限流 key ， 10 和  3 代表 <b> 该资源 10 秒内可以访问 3 次</b>。

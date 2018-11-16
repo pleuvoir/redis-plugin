@@ -14,7 +14,7 @@ public class LuaLimitTest {
 	public static void main(String[] args) throws InterruptedException {
 
 		AnnotationConfigApplicationContext app = new AnnotationConfigApplicationContext(AppConfiguration.class);
-		RateLimit limitExecutor = app.getBean(RateLimit.class);
+		RateLimit rateLimit = app.getBean(RateLimit.class);
 		
 	       Timer timer = new Timer();
 	        timer.scheduleAtFixedRate(new TimerTask() {
@@ -23,7 +23,7 @@ public class LuaLimitTest {
 	                    new Thread(new Runnable() {
 	                        @Override
 	                        public void run() {
-							if (limitExecutor.tryAccess("resource-name", "X-Y", 10, 20)) {
+							if (rateLimit.tryAccess("resource-name", "X-Y", 10, 20)) {
 								System.out.println("I get it ! " + LocalDateTime.now().getSecond());
 							} else {
 								System.out.println("oh my god, i am a loser ..");
