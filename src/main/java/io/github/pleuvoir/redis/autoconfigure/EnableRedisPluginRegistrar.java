@@ -24,7 +24,7 @@ public class EnableRedisPluginRegistrar extends AbstractPluginRegistrar {
 	@Override
 	protected void customize(BeanDefinitionRegistry registry, AnnotationAttributes attributes,
 			BeanDefinitionBuilder definition, BeanFactory beanFactory) {
-		definition.addPropertyValue("location", getLocationWithProfileIfNecessary(attributes.getString("location")));
+		definition.addPropertyValue("location", locationFormat(attributes.getString("location")));
 	}
 
 }

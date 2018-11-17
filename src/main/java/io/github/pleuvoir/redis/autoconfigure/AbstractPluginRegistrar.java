@@ -71,19 +71,17 @@ public abstract class AbstractPluginRegistrar
 		return getEnableAnnotationClass().getCanonicalName();
 	}
 
-	protected String getLocationWithProfileIfNecessary(String location) {
+	protected String locationFormat(String location) {
 		String[] activeProfiles = environment.getActiveProfiles();
 		if (ArrayUtils.isEmpty(activeProfiles)) {
 			return location;
 		}
-		StringBuilder builder = new StringBuilder();
-		builder.append(StringUtils.substringBefore(location, PROPERTIES_FILE_EXTENSION)).append("-")
-				.append(activeProfiles[0]).append(PROPERTIES_FILE_EXTENSION);
 
+		String formatted = StringUtils.replace(location, "[profile]", activeProfiles[0]);
 		if (logger.isInfoEnabled()) {
-			logger.info("activeProfiles： {}, location：{}", Arrays.asList(activeProfiles), builder.toString());
+			logger.info("activeProfiles： {}, location：{}", Arrays.asList(activeProfiles), formatted);
 		}
-		return builder.toString();
+		return formatted;
 	}
 
 	protected void customize(Map<String, Object> attributes, BeanDefinitionBuilder definition) {
