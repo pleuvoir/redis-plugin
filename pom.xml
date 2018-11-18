@@ -4,7 +4,7 @@
 
 	<groupId>io.github.pleuvoir</groupId>
 	<artifactId>redis-plugin</artifactId>
-	<version>1.0.7</version>
+	<version>1.0.8</version>
 	<packaging>jar</packaging>
 	<name>${project.artifactId}</name>
 	<description>A plugin support for redis based on java.</description>
@@ -13,8 +13,7 @@
 	<properties>
 		<jdk.version>1.8</jdk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<lang3.version>3.7</lang3.version>
-		<fastjson.version>1.2.49</fastjson.version>
+		<plugin.base.version>1.0.0</plugin.base.version>
 		<spring.data.redis>2.0.2.RELEASE</spring.data.redis>
 		<jedis.version>2.9.0</jedis.version>
 		<lettuce.version>5.0.4.RELEASE</lettuce.version>
@@ -22,6 +21,11 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>io.github.pleuvoir</groupId>
+				<artifactId>plugin-base</artifactId>
+				<version>${plugin.base.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-redis</artifactId>
@@ -37,20 +41,14 @@
 				<artifactId>lettuce-core</artifactId>
 				<version>${lettuce.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>${lang3.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.alibaba</groupId>
-				<artifactId>fastjson</artifactId>
-				<version>${fastjson.version}</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>io.github.pleuvoir</groupId>
+			<artifactId>plugin-base</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-redis</artifactId>
@@ -62,14 +60,6 @@
 		<dependency>
 			<groupId>io.lettuce</groupId>
 			<artifactId>lettuce-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>fastjson</artifactId>
 		</dependency>
 	</dependencies>
 

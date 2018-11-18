@@ -13,7 +13,7 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
-import io.github.pleuvoir.redis.kit.PropertiesWrap;
+import io.github.pleuvoir.base.kit.PropertiesWrap;
 
 public class LettuceRateLimit implements RateLimit, InitializingBean {
 

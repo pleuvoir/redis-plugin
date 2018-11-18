@@ -17,7 +17,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 
-import io.github.pleuvoir.redis.kit.PropertiesWrap;
+import io.github.pleuvoir.base.kit.PropertiesWrap;
 
 /**
  * redis缓存实现

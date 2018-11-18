@@ -28,9 +28,9 @@ import org.springframework.util.Assert;
 
 import com.alibaba.fastjson.support.spring.GenericFastJsonRedisSerializer;
 
+import io.github.pleuvoir.base.kit.PropertiesWrap;
 import io.github.pleuvoir.redis.cache.CacheService;
 import io.github.pleuvoir.redis.cache.RedisCacheService;
-import io.github.pleuvoir.redis.kit.PropertiesWrap;
 import io.github.pleuvoir.redis.limit.LettuceRateLimit;
 import io.github.pleuvoir.redis.lock.LettuceLock;
 import io.lettuce.core.resource.ClientResources;
