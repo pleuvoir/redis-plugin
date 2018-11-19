@@ -78,12 +78,12 @@ public class RedisLockTest {
 			System.out.println(name + "	😭  this resource is locked .. ");
 			return;
 		}
-
+		if (!lock.lock(key, owner)) {
+			System.out.println(name + "	I got a lock fail ... my owner：" + owner);
+			return;
+		}
 		try {
-			if (!lock.lock(key, owner)) {
-				System.out.println(name + "	I got a lock fail ... my owner：" + owner);
-				return;
-			}
+			
 			// do your bussiness
 			System.out.println(Thread.currentThread().getName() + " ============ unpark happily ... ============");
 		} finally {

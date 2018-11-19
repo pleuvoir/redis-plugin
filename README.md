@@ -112,10 +112,10 @@ if (lock.isLocked(key)) {
 	return;
 }
 
-try {
-	if (!lock.lock(key, owner)) {
+if (!lock.lock(key, owner)) {
 		return;
 	}
+try {
 	// do your bussiness
 	..
 } finally {
