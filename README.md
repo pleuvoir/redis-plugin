@@ -106,20 +106,19 @@ boolean putIfExist(String key, Object value);
 
 ```java
 String key = "88250";
-String owner = new AlternativeJdkIdGenerator().generateId().toString();
 
 if (lock.isLocked(key)) {
 	return;
 }
 
-if (!lock.lock(key, owner)) {
+if (!lock.lock(key)) {
 		return;
 	}
 try {
 	// do your bussiness
 	..
 } finally {
-	lock.unlock(key, owner);
+	lock.unlock(key);
 }
 ```
 
