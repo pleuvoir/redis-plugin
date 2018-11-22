@@ -15,7 +15,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<plugin.base.version>1.0.0</plugin.base.version>
 		<spring.data.redis>2.0.2.RELEASE</spring.data.redis>
-		<jedis.version>2.9.0</jedis.version>
 		<lettuce.version>5.0.4.RELEASE</lettuce.version>
 	</properties>
 
@@ -30,11 +29,6 @@
 				<groupId>org.springframework.data</groupId>
 				<artifactId>spring-data-redis</artifactId>
 				<version>${spring.data.redis}</version>
-			</dependency>
-			<dependency>
-				<groupId>redis.clients</groupId>
-				<artifactId>jedis</artifactId>
-				<version>${jedis.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.lettuce</groupId>
@@ -52,10 +46,6 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-redis</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.lettuce</groupId>

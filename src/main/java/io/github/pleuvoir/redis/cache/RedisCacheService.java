@@ -180,9 +180,7 @@ public class RedisCacheService implements CacheService {
         return 0.00;
     }
 	
-	/**
-	 * 获取increment操作后的值
-	 */
+	
 	@Override
 	public double getIncrValue(String key) {  
 	      

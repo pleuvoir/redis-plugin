@@ -31,6 +31,12 @@ public interface CacheService {
 	 */
 	public void set(String key, Object value, int second);
 	
+	/** 
+     * 缓存中key对应的值增加数值double 
+     * @param key  
+     * @param incrValue 
+     * @return 
+     */
 	public void increment(String key, double value, int second);
 	
 	/**
@@ -109,6 +115,9 @@ public interface CacheService {
      */  
 	double incrBy(String key, double incrValue, int seconds);
 	
+	/**
+	 * 获取increment操作后的值
+	 */
 	double getIncrValue(String key);
 	
 	/**
