@@ -111,8 +111,9 @@ if (lock.isLocked(key)) {
 }
 
 if (!lock.lock(key)) {
-		return;
-	}
+	return;
+}
+
 try {
 	// do your bussiness
 	..
