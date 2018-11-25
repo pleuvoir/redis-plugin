@@ -68,7 +68,6 @@ public class AppConfiguration {
 
 只需在配置类中声明 `@EnableRedisPlugin` 即可，当然这是使用默认配置。 `EnableRedisPlugin` 注解有一个属性是  `location` 表示需要加载的配置文件位置, `location` 可以不声明，默认为  classpath 下的 `redis.properties` 文件。 
 
-如果项目使用  `Profiles` 来管理 spring 的环境，如  `Environment().setActiveProfiles("dev")` ，自动配置支持使用 `[profile]` 替换环境修饰符。即如果您使用了 `@EnableRedisPlugin(location = "config/[profile]/redis-[profile].properties")` 进行配置，插件会寻找   `config/dev/redis-dev.properties` 文件，确保文件存在即可。使用 xml 注册的方式，不受此特性的影响，请配置实际的文件名称。
 
 #### 4. API
 
@@ -129,6 +128,10 @@ rateLimit.tryAccess("limit", "X-Y", 10, 3);
 ```
 
 流控正常时返回  `true`，被限流时返回 `false`，其中 `limit` 为资源的名称， `X-Y` 为限流 key ， 10 和  3 代表 <b> 该资源 10 秒内可以访问 3 次</b>。
+
+### 特别说明
+
+如果项目使用  `Profiles` 来管理 spring 的环境，如  `Environment().setActiveProfiles("dev")` ，自动配置支持使用 `[profile]` 替换环境修饰符。即如果您使用了 `@EnableRedisPlugin(location = "redis-[profile].properties")` 进行配置，插件会寻找   `redis-dev.properties` 文件，确保文件存在即可。使用  xml 注册的方式，不受此特性的影响，请配置实际的文件名称。
 
 ### TODO LIST
 
